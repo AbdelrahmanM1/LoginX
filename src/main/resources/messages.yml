@@ -1,0 +1,59 @@
+# =========================
+# LoginX Messages
+# =========================
+prefix: "&8[&bLoginX&8] &r"
+
+errors:
+  not-logged-in: "&cYou must be logged in to do this."
+  already-logged-in: "&eYou are already logged in."
+  wrong-password: "&cIncorrect password."
+  login-timeout: "&cYou took too long to authenticate.\n&ePlease reconnect and try again within &c{seconds}s&e."
+  wrong-password-attempts: "&cWrong password. &e{remaining} attempt(s) remaining before kick."
+  password-too-short: "&cPassword must be at least &e{min} &ccharacters."
+  password-mismatch: "&cPasswords do not match."
+  premium-only: "&cThis account is locked as premium."
+  session-expired: "&eYour session expired. Please login again."
+  too-many-attempts: "&cToo many failed attempts. Try again later."
+  too-many-attempts-kick: "&cToo many failed login attempts.\n&eTry again in &c{seconds}s&e."
+  no-permission: "&cYou do not have permission to do this."
+  same-password: "&cNew password must differ from old password."
+  registration-in-progress: "&eRegistration already in progress, please wait."
+
+auth:
+  register-success: "&aRegistration successful. You are now logged in."
+  login-success: "&aLogin successful."
+  logout-success: "&eYou have been logged out."
+  change-pass-success: "&aPassword changed successfully. All sessions invalidated."
+  change-pass-fail: "&cFailed to change password."
+  session-restored: "&aSession restored. Welcome back!"
+
+premium:
+  verified: "&aYour account is now locked as premium."
+  already-verified: "&eYour account is already premium-locked."
+  cracked-kick: "&cThis username is locked to a premium account."
+  not-supported: "&cCould not verify premium status. Please try again."
+  verified-kick: "&a&lAccount Premium Verified!\n\n&7Your account has been locked to your Mojang profile.\n\n&ePlease reconnect to continue.\n&8(Reconnecting in &b{seconds}s&8...)"
+
+admin:
+  reload-success: "&aLoginX configuration reloaded."
+  session-invalidated: "&eSession invalidated for &b{player}&e."
+  premium-forced: "&aPremium lock forced for &b{player}&a."
+  player-not-found: "&cPlayer &b{player}&c not found."
+  ip-unbanned: "&aIP &b{ip}&a has been unbanned."
+
+info:
+  login-required: "&ePlease login using &b/login <password>"
+  register-required: "&ePlease register using &b/register <password> <confirm>"
+  usage-register: "&eUsage: /register <password> <confirm>"
+  usage-login: "&eUsage: /login <password>"
+  usage-changepass: "&eUsage: /changepass <oldPassword> <newPassword> <confirm>"
+
+restrict:
+  title-not-registered: "&c&lWELCOME"
+  subtitle-register: "&eCreate an account to start playing!"
+
+  title-not-logged-in: "&e&lWELCOME BACK"
+  subtitle-login: "&7Please login to continue."
+
+  actionbar-register: "&b/register &f<password> &7<confirm_password>"
+  actionbar-login: "&b/login &f<password>"
