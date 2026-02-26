@@ -1,59 +1,64 @@
-# =========================
-# LoginX Messages
-# =========================
+# =============================================================
+#   LoginX Messages
+#   Supports & color codes and \n for newlines in kick messages
+# =============================================================
 prefix: "&8[&bLoginX&8] &r"
 
 errors:
-  not-logged-in: "&cYou must be logged in to do this."
-  already-logged-in: "&eYou are already logged in."
-  wrong-password: "&cIncorrect password."
-  login-timeout: "&cYou took too long to authenticate.\n&ePlease reconnect and try again within &c{seconds}s&e."
-  wrong-password-attempts: "&cWrong password. &e{remaining} attempt(s) remaining before kick."
-  password-too-short: "&cPassword must be at least &e{min} &ccharacters."
-  password-mismatch: "&cPasswords do not match."
-  premium-only: "&cThis account is locked as premium."
-  session-expired: "&eYour session expired. Please login again."
-  too-many-attempts: "&cToo many failed attempts. Try again later."
-  too-many-attempts-kick: "&cToo many failed login attempts.\n&eTry again in &c{seconds}s&e."
-  no-permission: "&cYou do not have permission to do this."
-  same-password: "&cNew password must differ from old password."
-  registration-in-progress: "&eRegistration already in progress, please wait."
+  not-logged-in:            "&cYou must be logged in to do that."
+  already-logged-in:        "&aYou are already logged in."
+  wrong-password:           "&cWrong password. Please try again."
+  wrong-password-attempts:  "&cWrong password. &e{remaining} attempt(s) left before you are kicked."
+  login-timeout:            "&cYou did not authenticate in time.\n&ePlease reconnect and login within &c{seconds}s&e."
+  password-too-short:       "&cPassword too short. Minimum &e{min} &ccharacters required."
+  password-mismatch:        "&cPasswords do not match. Please try again."
+  same-password:            "&cNew password cannot be the same as your current password."
+  premium-only:             "&cThis account is locked to a premium (Mojang) profile."
+  session-expired:          "&eYour session expired. Please &b/login&e again."
+  too-many-attempts:        "&cToo many failed attempts. Please wait and try again."
+  too-many-attempts-kick:   "&c&lToo Many Failed Attempts\n\n&7You have been temporarily blocked.\n&eTry again in &c{seconds}s&7."
+  no-permission:            "&cYou do not have permission to do this."
+  registration-in-progress: "&eAlready processing your registration, please wait."
+  fingerprint-blocked:      "&c&lAccount Protection Active\n\n&7A login attempt was blocked because\n&7the device fingerprint did not match\n&7the one registered on this account.\n\n&eIf this was you, please contact an admin."
 
 auth:
-  register-success: "&aRegistration successful. You are now logged in."
-  login-success: "&aLogin successful."
-  logout-success: "&eYou have been logged out."
-  change-pass-success: "&aPassword changed successfully. All sessions invalidated."
-  change-pass-fail: "&cFailed to change password."
-  session-restored: "&aSession restored. Welcome back!"
+  register-success:     "&aAccount created! Welcome to the server."
+  login-success:        "&aLogged in successfully. Welcome back!"
+  logout-success:       "&eYou have been logged out."
+  change-pass-success:  "&aPassword changed! Please &b/login&a again with your new password."
+  change-pass-fail:     "&cCould not change password. Please try again."
+  session-restored:     "&aSession restored automatically. Welcome back!"
+  session-restored-secure: "&aSession restored. &7Your device fingerprint matched ✔"
 
 premium:
-  verified: "&aYour account is now locked as premium."
-  already-verified: "&eYour account is already premium-locked."
-  cracked-kick: "&cThis username is locked to a premium account."
-  not-supported: "&cCould not verify premium status. Please try again."
-  verified-kick: "&a&lAccount Premium Verified!\n\n&7Your account has been locked to your Mojang profile.\n\n&ePlease reconnect to continue.\n&8(Reconnecting in &b{seconds}s&8...)"
+  verified:          "&aYour account is now linked to your Mojang profile."
+  already-verified:  "&eYour account is already Mojang-verified."
+  not-supported:     "&cCould not verify with Mojang. Please try again later."
+  cracked-kick: "&c&lUsername Unavailable\n\n&7This username is linked to a\n&7verified Mojang account.\n&7Please use a different username."
+  verified-kick: "&a&lAccount Verified!\n\n&7Your account is now protected by\n&7your Mojang profile.\n\n&ePlease reconnect to continue.\n&8(Reconnect in &b{seconds}s&8...)"
+
+fingerprint:
+  mismatch-warning: "&e&lDevice Change Detected &7— Your session was invalidated.\n&7If this was not you, change your password immediately."
+  blocked-kick: "&c&lAccess Denied — Device Mismatch\n\n&7Your device fingerprint does not\n&7match this account's registered device.\n\n&eContact an admin if you changed devices."
 
 admin:
-  reload-success: "&aLoginX configuration reloaded."
-  session-invalidated: "&eSession invalidated for &b{player}&e."
-  premium-forced: "&aPremium lock forced for &b{player}&a."
-  player-not-found: "&cPlayer &b{player}&c not found."
-  ip-unbanned: "&aIP &b{ip}&a has been unbanned."
+  reload-success:       "&aLoginX config and messages reloaded."
+  session-invalidated:  "&eSession cleared for &b{player}&e."
+  premium-forced:       "&aMojang lock applied to &b{player}&a."
+  player-not-found:     "&cNo account found for &b{player}&c."
+  ip-unbanned:          "&aIP &b{ip}&a has been unbanned."
 
 info:
-  login-required: "&ePlease login using &b/login <password>"
-  register-required: "&ePlease register using &b/register <password> <confirm>"
-  usage-register: "&eUsage: /register <password> <confirm>"
-  usage-login: "&eUsage: /login <password>"
-  usage-changepass: "&eUsage: /changepass <oldPassword> <newPassword> <confirm>"
+  login-required:    "&ePlease login: &b/login <password>"
+  register-required: "&eNew here? Register: &b/register <password> <confirm>"
+  usage-register:    "&eUsage: &b/register <password> <confirm>"
+  usage-login:       "&eUsage: &b/login <password>"
+  usage-changepass:  "&eUsage: &b/changepass <old> <new> <confirm>"
 
 restrict:
-  title-not-registered: "&c&lWELCOME"
-  subtitle-register: "&eCreate an account to start playing!"
-
-  title-not-logged-in: "&e&lWELCOME BACK"
-  subtitle-login: "&7Please login to continue."
-
-  actionbar-register: "&b/register &f<password> &7<confirm_password>"
-  actionbar-login: "&b/login &f<password>"
+  title-not-registered:  "&c&lNEW PLAYER"
+  subtitle-register:     "&eType &b/register <pass> <pass>&e to start playing"
+  title-not-logged-in:   "&e&lWELCOME BACK"
+  subtitle-login:        "&7Type &b/login <password>&7 to continue"
+  actionbar-register:    "&b/register &f<password> <confirm>"
+  actionbar-login:       "&b/login &f<password>"
