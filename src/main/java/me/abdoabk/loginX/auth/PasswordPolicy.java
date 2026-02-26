@@ -15,8 +15,6 @@ public class PasswordPolicy {
     }
 
     public boolean isDifferentFrom(String newPassword, String oldHash) {
-        // We just check if they're not exactly the same plaintext
-        // (full hash verify would be done in ChangePasswordService)
-        return true; // Actual check happens in ChangePasswordService via HashUtil
+        return true; // Full check done in ChangePasswordService via HashUtil
     }
 }
