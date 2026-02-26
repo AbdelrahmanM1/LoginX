@@ -43,58 +43,57 @@ public class LoginService {
         String ip = IpUtil.getIp(player);
         int maxAttempts = config.getBruteForceMaxAttempts();
 
-        plugin.getAsyncExecutor().execute(() -> {
+        playerRepository.findByUuid(player.getUniqueId())
+                .thenAcceptAsync(account -> {
 
-            if (bruteForceService.isBanned(ip)) {
-                long seconds = bruteForceService.getBanRemainingSeconds(ip);
-                plugin.getServer().getScheduler().runTask(plugin, () ->
-                        player.kickPlayer(messages.getRaw("errors.too-many-attempts-kick")
-                                .replace("{seconds}", String.valueOf(seconds))));
-                return;
-            }
+                    if (bruteForceService.isBanned(ip)) {
+                        long seconds = bruteForceService.getBanRemainingSeconds(ip);
+                        plugin.getServer().getScheduler().runTask(plugin, () ->
+                                player.kickPlayer(messages.getRaw("errors.too-many-attempts-kick")
+                                        .replace("{seconds}", String.valueOf(seconds))));
+                        return;
+                    }
 
-            playerRepository.findByUuid(player.getUniqueId()).thenAcceptAsync(account -> {
-                if (account == null) {
-                    plugin.getServer().getScheduler().runTask(plugin, () ->
-                            MessageUtil.send(player, messages.get("info.register-required")));
-                    return;
-                }
+                    if (account == null) {
+                        plugin.getServer().getScheduler().runTask(plugin, () ->
+                                MessageUtil.send(player, messages.get("info.register-required")));
+                        return;
+                    }
 
-                if (!HashUtil.verifyPassword(password, account.getPasswordHash())) {
-                    int attempts  = bruteForceService.recordFailure(ip, player.getUniqueId());
-                    int remaining = Math.max(0, maxAttempts - attempts);
+                    if (!HashUtil.verifyPassword(password, account.getPasswordHash())) {
+                        int attempts  = bruteForceService.recordFailure(ip, player.getUniqueId());
+                        int remaining = Math.max(0, maxAttempts - attempts);
+
+                        plugin.getServer().getScheduler().runTask(plugin, () -> {
+                            if (!player.isOnline()) return;
+                            if (remaining == 0) {
+                                long banSeconds = config.getBruteForceTempBanMinutes() * 60L;
+                                player.kickPlayer(messages.getRaw("errors.too-many-attempts-kick")
+                                        .replace("{seconds}", String.valueOf(banSeconds)));
+                            } else {
+                                MessageUtil.send(player, messages.get("errors.wrong-password-attempts")
+                                        .replace("{remaining}", String.valueOf(remaining)));
+                            }
+                        });
+                        return;
+                    }
+
+                    bruteForceService.clearAttempts(ip, player.getUniqueId());
 
                     plugin.getServer().getScheduler().runTask(plugin, () -> {
                         if (!player.isOnline()) return;
-                        if (remaining == 0) {
-                            long banSeconds = config.getBruteForceTempBanMinutes() * 60L;
-                            player.kickPlayer(messages.getRaw("errors.too-many-attempts-kick")
-                                    .replace("{seconds}", String.valueOf(banSeconds)));
-                        } else {
-                            MessageUtil.send(player, messages.get("errors.wrong-password-attempts")
-                                    .replace("{remaining}", String.valueOf(remaining)));
-                        }
+                        String fp = fingerprintService.buildFingerprint(player).getHash();
+
+                        sessionService.createSession(player.getUniqueId(), ip, fp).thenRun(() ->
+                                plugin.getServer().getScheduler().runTask(plugin, () -> {
+                                    if (!player.isOnline()) return;
+                                    loginTimeoutService.cancelTimeout(player.getUniqueId());
+                                    plugin.getRestrictListener().removeRestrictions(player);
+                                    MessageUtil.send(player, messages.get("auth.login-success"));
+                                })
+                        );
                     });
-                    return;
-                }
 
-                bruteForceService.clearAttempts(ip, player.getUniqueId());
-
-                plugin.getServer().getScheduler().runTask(plugin, () -> {
-                    if (!player.isOnline()) return;
-                    String fp = fingerprintService.buildFingerprint(player).getHash();
-
-                    sessionService.createSession(player.getUniqueId(), ip, fp).thenRun(() ->
-                            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                                if (!player.isOnline()) return;
-                                loginTimeoutService.cancelTimeout(player.getUniqueId());
-                                plugin.getRestrictListener().removeRestrictions(player);
-                                MessageUtil.send(player, messages.get("auth.login-success"));
-                            })
-                    );
-                });
-
-            }, plugin.getAsyncExecutor());
-        });
+                }, plugin.getAsyncExecutor());
     }
 }
