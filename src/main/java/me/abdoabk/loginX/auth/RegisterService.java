@@ -69,7 +69,6 @@ public class RegisterService {
             return;
         }
 
-        // FIX: was using "already-logged-in" — now uses a correct message
         if (!registering.add(uuid)) {
             MessageUtil.send(player, messages.get("errors.registration-in-progress"));
             return;
@@ -111,7 +110,6 @@ public class RegisterService {
                         uuid, player.getName(), hash, PremiumState.CRACKED, Instant.now());
 
                 playerRepository.save(account).thenRunAsync(() ->
-                        // FIX: build fingerprint on main thread, not in async chain
                         plugin.getServer().getScheduler().runTask(plugin, () -> {
                             if (!player.isOnline()) { registering.remove(uuid); return; }
                             String fp = fingerprintService.buildFingerprint(player).getHash();
