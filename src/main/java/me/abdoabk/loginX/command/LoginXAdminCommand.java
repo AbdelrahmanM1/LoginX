@@ -8,11 +8,16 @@ import me.abdoabk.loginX.storage.PlayerRepository;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class LoginXAdminCommand implements CommandExecutor {
+public class LoginXAdminCommand implements CommandExecutor, TabCompleter {
 
     private final LoginX plugin;
     private final SessionService sessionService;
@@ -105,6 +110,53 @@ public class LoginXAdminCommand implements CommandExecutor {
         }
 
         return true;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd,
+                                                @NotNull String label, @NotNull String[] args) {
+        if (!sender.hasPermission("loginx.admin")) return List.of();
+
+        // /loginx <subcommand>
+        if (args.length == 1) {
+            List<String> subs = Arrays.asList("reload", "info", "session", "premium", "unban");
+            return filter(subs, args[0]);
+        }
+
+        // /loginx session <invalidate>
+        if (args.length == 2 && args[0].equalsIgnoreCase("session")) {
+            return filter(List.of("invalidate"), args[1]);
+        }
+
+        // /loginx premium <force>
+        if (args.length == 2 && args[0].equalsIgnoreCase("premium")) {
+            return filter(List.of("force"), args[1]);
+        }
+
+        // /loginx info <player>
+        // /loginx session invalidate <player>
+        // /loginx premium force <player>
+        boolean wantsPlayer =
+                (args.length == 2 && args[0].equalsIgnoreCase("info")) ||
+                        (args.length == 3 && args[0].equalsIgnoreCase("session") && args[1].equalsIgnoreCase("invalidate")) ||
+                        (args.length == 3 && args[0].equalsIgnoreCase("premium") && args[1].equalsIgnoreCase("force"));
+
+        if (wantsPlayer) {
+            String typed = args[args.length - 1];
+            return plugin.getServer().getOnlinePlayers().stream()
+                    .map(p -> p.getName())
+                    .filter(name -> name.toLowerCase().startsWith(typed.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        return List.of();
+    }
+
+    // Filters a list of options by what the player has typed so far
+    private List<String> filter(List<String> options, String typed) {
+        return options.stream()
+                .filter(o -> o.toLowerCase().startsWith(typed.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
     private void sendHelp(CommandSender sender) {
