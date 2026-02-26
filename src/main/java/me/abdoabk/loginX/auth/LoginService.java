@@ -12,21 +12,6 @@ import me.abdoabk.loginX.util.IpUtil;
 import me.abdoabk.loginX.util.MessageUtil;
 import org.bukkit.entity.Player;
 
-/**
- * Handles the /login command flow end-to-end.
- *
- * <h2>Fix: KICK_AFTER_ATTEMPTS aligned with config</h2>
- * The old code had {@code KICK_AFTER_ATTEMPTS = 4} hardcoded, ignoring the config value
- * {@code security.brute-force.max-attempts = 5}. Now reads directly from config so they
- * are always in sync.
- *
- * <h2>Fix: remaining attempts can't go negative</h2>
- * {@code remaining = max(0, maxAttempts - attempts)}.
- *
- * @see me.abdoabk.loginX.command.LoginCommand
- * @see BruteForceService
- * @see SessionService
- */
 public class LoginService {
 
     private final LoginX plugin;
@@ -58,7 +43,6 @@ public class LoginService {
         String ip = IpUtil.getIp(player);
         int maxAttempts = config.getBruteForceMaxAttempts();
 
-        // Run the entire login flow on our dedicated async executor
         plugin.getAsyncExecutor().execute(() -> {
 
             if (bruteForceService.isBanned(ip)) {
@@ -76,7 +60,6 @@ public class LoginService {
                     return;
                 }
 
-                // ── 3. Verify password ─────────────────────────────────────────────
                 if (!HashUtil.verifyPassword(password, account.getPasswordHash())) {
                     int attempts  = bruteForceService.recordFailure(ip, player.getUniqueId());
                     int remaining = Math.max(0, maxAttempts - attempts);
@@ -84,7 +67,6 @@ public class LoginService {
                     plugin.getServer().getScheduler().runTask(plugin, () -> {
                         if (!player.isOnline()) return;
                         if (remaining == 0) {
-                            // IP is now banned — bruteForceService.recordFailure() already wrote the DB row
                             long banSeconds = config.getBruteForceTempBanMinutes() * 60L;
                             player.kickPlayer(messages.getRaw("errors.too-many-attempts-kick")
                                     .replace("{seconds}", String.valueOf(banSeconds)));
@@ -98,7 +80,6 @@ public class LoginService {
 
                 bruteForceService.clearAttempts(ip, player.getUniqueId());
 
-                // Build fingerprint on main thread (Paper reflection)
                 plugin.getServer().getScheduler().runTask(plugin, () -> {
                     if (!player.isOnline()) return;
                     String fp = fingerprintService.buildFingerprint(player).getHash();
