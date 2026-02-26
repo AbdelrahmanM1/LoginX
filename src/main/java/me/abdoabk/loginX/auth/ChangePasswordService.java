@@ -9,20 +9,6 @@ import me.abdoabk.loginX.util.HashUtil;
 import me.abdoabk.loginX.util.MessageUtil;
 import org.bukkit.entity.Player;
 
-/**
- * Handles the /changepass command flow end-to-end.
- *
- * <h2>Fix: post-change state</h2>
- * After invalidating the session the old code left the player in a limbo state —
- * logged-out but with no blindness, no title, no timeout.  Now we:
- * <ol>
- *   <li>Send the success message.</li>
- *   <li>Re-apply restrictions (blindness + UI loops) so they must log back in.</li>
- *   <li>Start the login timeout so they get kicked if they go idle.</li>
- * </ol>
- *
- * @see me.abdoabk.loginX.command.ChangePassCommand
- */
 public class ChangePasswordService {
 
     private final LoginX plugin;
